@@ -37,8 +37,7 @@ from url_normalize import url_normalize
 configuration = dkube_client.Configuration()
 configuration.api_key_prefix['Authorization'] = 'Bearer'
 
-#dkubeURL = 'http://dkube-controller-master.dkube.cluster.local:5000'
-dkubeURL = 'https://192.168.200.106:32222'
+dkubeURL = 'http://dkube-controller-master.dkube.cluster.local:5000'
 configuration.host = url_normalize('{}/dkube/v2/controller'.format(dkubeURL))
 configuration.verify_ssl = False
 
