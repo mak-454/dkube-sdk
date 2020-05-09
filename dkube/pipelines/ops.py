@@ -1,6 +1,6 @@
 from dkube.sdk import *
 
-from components import *
+from .components import *
 
 def dkube_training_op(
     name=generate('training'),
