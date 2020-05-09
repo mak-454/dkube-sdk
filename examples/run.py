@@ -29,6 +29,8 @@ if __name__ == "__main__":
     training.add_input_dataset('mak1', mountpath='/opt/dkube/input')
     training.add_output_model('mak1', mountpath='/opt/dkube/output')
 
+    print(training.job.to_dict())
+
     preprocessing = DkubePreprocessing('oc')
     preprocessing.update_startupscript(startup_script='sleep 30')
     preprocessing.add_project('mak1')
