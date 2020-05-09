@@ -24,6 +24,7 @@ from .docopt import docopt
 from pyfiglet import Figlet
 
 import os
+import json
 
 from dkube.sdk import *
 
@@ -36,7 +37,8 @@ from url_normalize import url_normalize
 configuration = dkube_client.Configuration()
 configuration.api_key_prefix['Authorization'] = 'Bearer'
 
-dkubeURL = 'http://dkube-controller-master.dkube.cluster.local:5000'
+#dkubeURL = 'http://dkube-controller-master.dkube.cluster.local:5000'
+dkubeURL = 'https://192.168.200.106:32222'
 configuration.host = url_normalize('{}/dkube/v2/controller'.format(dkubeURL))
 configuration.verify_ssl = False
 
@@ -55,13 +57,17 @@ def run_outputs(user, _class, name):
     with open("/tmp/artifacts") as op:
         op.write(json.dumps(outputs))
 
-def command_serving(user='', serving='', runid='', **kwargs):
+def command_serving(name='', user='', serving='', runid='', workflowid='', **kwargs):
+    stagename = name
+
     runname = generate('plserving')
+
     run = json.loads(serving)
     run['name'] = name
     run['parameters']['class'] = 'serving'
-    run['parameters']['tags'].extend(['owner=pipeline', 'stage='+name, 'workflowid='+workflowid, 'runid='+runid])
+    run['parameters']['inference']['tags'].extend(['owner=pipeline', 'stage='+name, 'workflowid='+workflowid, 'runid='+runid])
 
+    api = dkube_client.DkubeApi(dkube_client.ApiClient(configuration))
     api.jobs_add_one(user, run, run='true')
     while True:
         response = api.jobs_get_collection_one(user, 'serving', runname)
@@ -78,13 +84,17 @@ def command_serving(user='', serving='', runid='', **kwargs):
     run_outputs(user, 'serving', runname)
 
 
-def command_preprocessing(user='', preprocessing='', runid='', **kwargs):
+def command_preprocessing(name='', user='', preprocessing='', runid='', workflowid='', **kwargs):
+    stagename=name
+
     runname = generate('pldata')
+
     run = json.loads(preprocessing)
     run['name'] = runname
     run['parameters']['class'] = 'preprocessing'
-    run['parameters']['tags'].extend(['owner=pipeline', 'stage='+name, 'workflowid='+workflowid, 'runid='+runid])
+    run['parameters']['preprocessing']['tags'].extend(['owner=pipeline', 'stage='+stagename, 'workflowid='+workflowid, 'runid='+runid])
 
+    api = dkube_client.DkubeApi(dkube_client.ApiClient(configuration))
     api.jobs_add_one(user, runname, run='true')
     while True:
         response = api.jobs_get_collection_one(user, 'preprocessing', runname)
@@ -100,13 +110,17 @@ def command_preprocessing(user='', preprocessing='', runid='', **kwargs):
     #generate the outputs, next stage can pick from here
     run_outputs(user, 'preprocessing', runname)
 
-def command_training(user='', training='', runid='', **kwargs):
+def command_training(name='', user='', training='', runid='', workflowid='',**kwargs):
+    stagename = name
+
     runname = generate('pltraining')
+
     run = json.loads(training)
     run['name'] = runname
     run['parameters']['class'] = 'training'
-    run['parameters']['tags'].extend(['owner=pipeline', 'stage='+name, 'workflowid='+workflowid, 'runid='+runid])
+    run['parameters']['training']['tags'].extend(['owner=pipeline', 'stage='+stagename, 'workflowid='+workflowid, 'runid='+runid])
 
+    api = dkube_client.DkubeApi(dkube_client.ApiClient(configuration))
     api.jobs_add_one(user, run, run='true')
     while True:
         response = api.jobs_get_collection_one(user, 'training', runname)
@@ -128,8 +142,8 @@ def validate_token(token):
     api = dkube_client.DkubeApi(dkube_client.ApiClient(configuration))
 
     response = api.tokeninfo()
-    claims = response['data']
-    user = claims['user']
+    claims = response.to_dict()['data']
+    user = claims['username']
     role = claims['role']
 
     return user, role
@@ -137,7 +151,7 @@ def validate_token(token):
 def main():
     args = docopt(__doc__, version='1.4')
     data = {}
-    for key, val in kwargs.items():
+    for key, val in args.items():
         data[key.lstrip('--')] = val
 
     command = data['command']
