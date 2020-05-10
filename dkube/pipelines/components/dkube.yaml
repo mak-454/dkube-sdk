@@ -56,7 +56,7 @@ inputs:
   - {name: serving,         type: Dict,     optional: true,     default: '{}',
      description: 'Optional. Serving job definition filled and returned by dkube.rsrcs.DkubeServing().to_dict()'}
 
-  - {name: visualizer,      type:Dict,      optional: true,     default: '{}',
+  - {name: visualizer,      type: Dict,     optional: true,     default: '{}',
      description: 'Optional. Custom visualizer for this job, should be a self container container image with entrypoint set. 
                    Artifact storage will be shared between this visualizer and job.
                    which visualizer code can use to render. Visualizer should always render @ /.

@@ -10,9 +10,9 @@ def dkube_training_op(
     training=DkubeTraining):
 
     assert type(training) == DkubeTraining, "Invalid type for training argument, must be instance of dkube.sdk.rsrcs:DkubeTraining"
-    assert authToken == None, "Auth token is must"
+    assert authtoken == None, "Auth token is must"
 
-    return dkube_op(name, token, 'training', training=json.dumps(training.job.to_dict()))
+    return dkube_op(name, authtoken, 'training', training=json.dumps(training.job.to_dict()))
 
 def dkube_preprocessing_op(
     name=generate('data'),
@@ -20,9 +20,9 @@ def dkube_preprocessing_op(
     preprocessing=DkubePreprocessing):
 
     assert type(preprocessing) == DkubePreprocessing, "Invalid type for preprocessing argument, must be instance of dkube.sdk.rsrcs:DkubePreprocessing"
-    assert authToken == None, "Auth token is must"
+    assert authtoken == None, "Auth token is must"
 
-    return dkube_op(name, token, 'preprocessing', preprocessing=json.dumps(preprocesing.job.to_dict()))
+    return dkube_op(name, authtoken, 'preprocessing', preprocessing=json.dumps(preprocesing.job.to_dict()))
 
 def dkube_serving_op(
     name=generate('serving'),
@@ -30,6 +30,6 @@ def dkube_serving_op(
     serving=DkubeServing):
 
     assert type(training) == DkubeServing, "Invalid type for serving argument, must be instance of dkube.sdk.rsrcs:DkubeServing"
-    assert authToken == None, "Auth token is must"
+    assert authtoken == None, "Auth token is must"
 
-    return dkube_op(name, token, 'serving', serving=json.dumps(serving.job.to_dict()))
+    return dkube_op(name, authtoken, 'serving', serving=json.dumps(serving.job.to_dict()))

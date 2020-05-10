@@ -85,3 +85,7 @@ class ApiBase(object):
     def get_version(self,category, user, repo, version):
         pass
 
+    def get_run_lineage(self, category, user, runuuid):
+        api = dkube_client.DkubeApi(dkube_client.ApiClient(configuration))
+        response = api.get_one_run_lineage(user, category, runuuid)
+        return response.to_dict()['data']

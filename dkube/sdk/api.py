@@ -163,3 +163,8 @@ class DkubeApi(ApiBase):
     def get_version(self,category, user, repo, version):
         pass
 
+    def get_training_outputs(self, user, runname):
+        training_run = self.get_training_run(user, runname)
+        uuid = training_run['job']['parameters']['generated']['uuid']
+        run_lineage = super().get_run_lineage('training', user, uuid)
+        return run_lineage['outputs']

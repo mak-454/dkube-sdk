@@ -15,7 +15,7 @@ def dkube_op(name, token, stage, **kwargs):
     with open('{}/dkube.yaml'.format(path), 'rb') as stream:
         cdict = load_yaml(stream)
         cdict['name'] = name
-        cidct['metadata']['labels']['stage'] = stage
+        cdict['metadata']['labels']['stage'] = stage
         cyaml = dump_yaml(cdict)
         component = components.load_component_from_text(cyaml)
 
