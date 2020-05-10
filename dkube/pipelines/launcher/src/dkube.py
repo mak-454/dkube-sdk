@@ -45,7 +45,9 @@ configuration.verify_ssl = False
 
 
 def run_outputs(user, _class, name):
+    api = dkube_client.DkubeApi(dkube_client.ApiClient(configuration))
     gresponse = api.jobs_get_collection_one(user, _class, name)
+
     job = gresponse.to_dict()['data']['job']
     uuid = job['parameters']['generated']['uuid'] 
 
