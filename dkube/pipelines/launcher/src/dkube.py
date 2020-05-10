@@ -51,7 +51,7 @@ def run_outputs(user, _class, name):
     job = gresponse.to_dict()['data']['job']
     uuid = job['parameters']['generated']['uuid'] 
 
-    with open("/tmp/rundetails") as op:
+    with open("/tmp/rundetails", "w+") as op:
         op.write(json.dumps(job))
 
     lresponse = api.get_one_run_lineage(user, _class, uuid)
@@ -64,7 +64,7 @@ def run_outputs(user, _class, name):
                     for output in outputs
                 ]
 
-    with open("/tmp/artifacts") as op:
+    with open("/tmp/artifacts", "w+") as op:
         op.write(json.dumps(artifacts))
 
 def command_serving(name='', user='', serving='', runid='', workflowid='', **kwargs):
