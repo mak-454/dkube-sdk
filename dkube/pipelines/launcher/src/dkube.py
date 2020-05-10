@@ -53,8 +53,15 @@ def run_outputs(user, _class, name):
     lresponse = api.get_one_run_lineage(user, _class, uuid)
     outputs = lresponse.to_dict()['data']['outputs']
 
+    artifacts = [
+                    {'datum': output['version']['datum_name'], 'class': output['version']['datum_type'],
+                     'version': output['version']['uuid'], 'index': output['version']['index']
+                    }
+                    for output in outputs
+                ]
+
     with open("/tmp/artifacts") as op:
-        op.write(json.dumps(outputs))
+        op.write(json.dumps(artifacts))
 
 def command_serving(name='', user='', serving='', runid='', workflowid='', **kwargs):
     stagename = name
@@ -74,7 +81,7 @@ def command_serving(name='', user='', serving='', runid='', workflowid='', **kwa
         state, reason = status['state'], status['reason']
         if state.lower() in ['complete', 'failed', 'error']:
             print("run {} - completed with state {} and reason {}".format(runname, state, reason))
-            return
+            break
         else:
             print("run {} - waiting for completion, current state {}".format(runname, state))
             time.sleep(10)
@@ -101,7 +108,7 @@ def command_preprocessing(name='', user='', preprocessing='', runid='', workflow
         state, reason = status['state'], status['reason']
         if state.lower() in ['complete', 'failed', 'error']:
             print("run {} - completed with state {} and reason {}".format(runname, state, reason))
-            return
+            break
         else:
             print("run {} - waiting for completion, current state {}".format(runname, state))
             time.sleep(10)
@@ -127,7 +134,7 @@ def command_training(name='', user='', training='', runid='', workflowid='',**kw
         state, reason = status['state'], status['reason']
         if state.lower() in ['complete', 'failed', 'error']:
             print("run {} - completed with state {} and reason {}".format(runname, state, reason))
-            return
+            break
         else:
             print("run {} - waiting for completion, current state {}".format(runname, state))
             time.sleep(10)

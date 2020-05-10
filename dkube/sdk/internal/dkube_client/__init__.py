@@ -15,6 +15,10 @@
 
 from __future__ import absolute_import
 
+#[MAK] - Added to disable warnings for self signed cert based https conns
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 # import apis into sdk package
 from dkube_client.api.dfab_api import DfabApi
 from dkube_client.api.dkube_api import DkubeApi

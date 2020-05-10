@@ -32,7 +32,7 @@ class ApiBase(object):
         response = api.jobs_get_collection_one(user, category, name)
 
         if fields == '*':
-            return response.to_dict()
+            return response.to_dict()['data']
         elif fields == 'status':
             return response.to_dict()['data']['job']['parameters']['generated']['status']
         else:
@@ -58,7 +58,7 @@ class ApiBase(object):
         response = api.datums_get_one_by_class(user, category, name)
 
         if fields == '*':
-            return response.to_dict()
+            return response.to_dict()['data']
         elif fields == 'status':
             return response.to_dict()['data']['datum']['generated']['status']
         else:
