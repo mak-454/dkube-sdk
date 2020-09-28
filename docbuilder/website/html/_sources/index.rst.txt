@@ -24,9 +24,6 @@ It will install all the prerequisites in *requirements.txt*
 
 DKube SDK API Service
 =====================
-
-A python class which neatly abstracts the underlying resource level DKube APIs which allows users to integrate at workflow level.
-
 .. automodule:: dkube.sdk.api
    :members:
 
