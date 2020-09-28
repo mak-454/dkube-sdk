@@ -1,30 +1,47 @@
-"""This module defines APIs which can be used to interact with DKube platform.
-Using the SDK APIs all the different kind of dkube resources can be managed.
-Some network intensive functions are not available like downloading logs, exporting models to a local filesystem.
+"""
+.. module:: DKube API
+   :synopsis: Helper class which provides high level methods for user to integrate at workflow level.
+	      Import like below in your application::
+		from dkube.sdk import *
 
-Import like below in your application.
-`from dkube.sdk import *`
+.. moduleauthor:: Ahmed Khan <github.com/mak-454>
+
 
 """
+
 from dkube.sdk.internal.api_base import *
 from dkube.sdk.rsrcs import *
 
 import time
 
-"""DkubeApi class encapsules all the high level dkube workflow functions.
-This class mimics the user workflow on DKube UI.
-These high level methods are at resource level and abstracts the internal DKube APIs.
-
-` 
-    from dkube.sdk import *
-    dapi = DkubeApi()
-    'When no arguments are specified then URL & TOKEN are picked up from below environment variables
-     DKUBE_ACCESS_URL - URL at which dkube is available
-     DKUBE_ACCESS_TOKEN - Access token to be used in the APIs. All the APIs of DKube are private, without this token, APIs will fail.
-`
 """
+    **DkubeApi Python class**
 
+    This class encapsules all the high level dkube workflow functions.
 
+    - Example::
+
+	from dkube.sdk import *
+	dapi = DkubeApi()
+
+    - Inputs
+
+	- URL
+	    FQDN endpoint at which DKube platform is deployed
+
+	    Example::
+
+		- http://dkube-controller-master.dkube.cluster.local:5000
+		- https://dkube.ai:32222
+
+	    .. note:: If not provided then the value is picked from *DKUBE_ACCESS_URL* env variable. If not found then http://dkube-controller-master.dkube.cluster.local:5000 is used assuming the access is internal to the DKube cluster
+
+	- token
+	    Access token for the APIs, without which DKube will return 40x codes
+
+	    .. note:: If not provided then the value is picked from *DKUBE_ACCESS_TOKEN* env variable. ASSERTs if env is not defined.
+"""
+		
 class DkubeApi(ApiBase):
     def __init__(self, URL=None, token=None, common_tags=[], req_timeout=None, req_retries=None):
         if URL == None:
