@@ -3,23 +3,43 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to DKubeSDK's documentation!
-====================================
+DKube SDK Developer Guide!
+**************************
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+The document is guide for developers to build ML applications on DKube platform.
+DKube SDK is repository of abstract python classes and libraries which can be used by client side applications to interface with Dkube platform.
+
+How to install
+==============
+
+Python >=python3.5 is required
+
+Install using *pip* from *git* using below command::
+
+    sudo pip install git+https://github.com/oneconvergence/dkube.git or
+    sudo pip3 install git+https://github.com/oneconvergence/dkube.git
 
 
-DKube API
-=========
+It will install all the prerequisites in *requirements.txt*
+
+DKube SDK API Service
+=====================
+
+A python class which neatly abstracts the underlying resource level DKube APIs which allows users to integrate at workflow level.
 
 .. automodule:: dkube.sdk.api
    :members:
 
-Get the latest news at `CNN`_.
+DKube API Swagger Spec
+======================
 
-.. _CNN: apidoc/index.html
+- Full spec of DKube APIs
+- All the code is under package `dkube.sdk.internal.dkube_api`
+
+
+Click the link to view spec `DKUBEAPI`_.
+
+.. _DKUBEAPI: apidoc/index.html
 
 Indices and tables
 ==================

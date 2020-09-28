@@ -1,8 +1,6 @@
 """
-.. module:: DKube API
+.. module:: DKubeAPI
    :synopsis: Helper class which provides high level methods for user to integrate at workflow level.
-	      Import like below in your application::
-		from dkube.sdk import *
 
 .. moduleauthor:: Ahmed Khan <github.com/mak-454>
 
