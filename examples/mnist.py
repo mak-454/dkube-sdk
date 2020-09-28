@@ -1,6 +1,4 @@
 import sys
-import pdb;pdb.set_trace()
-#sys.path.insert(0, '/home/dkube/ahmed/dkube-sdk-2.0/dkube')
 
 from dkube.sdk import *
 from dkube.sdk.lib.api import *

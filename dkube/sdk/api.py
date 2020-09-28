@@ -1,28 +1,61 @@
-from .rsrcs import *
-from .lib import *
+"""This module defines APIs which can be used to interact with DKube platform.
+Using the SDK APIs all the different kind of dkube resources can be managed.
+Some network intensive functions are not available like downloading logs, exporting models to a local filesystem.
+
+Import like below in your application.
+`from dkube.sdk import *`
+
+"""
+from dkube.sdk.internal.api_base import *
+from dkube.sdk.rsrcs import *
 
 import time
 
+"""DkubeApi class encapsules all the high level dkube workflow functions.
+This class mimics the user workflow on DKube UI.
+These high level methods are at resource level and abstracts the internal DKube APIs.
+
+` 
+    from dkube.sdk import *
+    dapi = DkubeApi()
+    'When no arguments are specified then URL & TOKEN are picked up from below environment variables
+     DKUBE_ACCESS_URL - URL at which dkube is available
+     DKUBE_ACCESS_TOKEN - Access token to be used in the APIs. All the APIs of DKube are private, without this token, APIs will fail.
+`
+"""
+
+
 class DkubeApi(ApiBase):
-    def __init__(self, dkubeURL='http://dkube-controller-master.dkube.cluster.local:5000', authToken=None):
-        super().__init__(dkubeURL, authToken)
+    def __init__(self, URL=None, token=None, common_tags=[], req_timeout=None, req_retries=None):
+        if URL == None:
+            self.url = os.getenv(
+                "DKUBE_ACCESS_URL", "http://dkube-controller-master.dkube.cluster.local:5000")
+        if token == None:
+            self.token = os.getenv("DKUBE_ACCESS_TOKEN", None)
+            assert self.token == None, "TOKEN must be specified either by passing argument or by setting DKUBE_ACCESS_TOKEN env variable"
+
+        self.common_tags = common_tags
+        super().__init__(self.url, self.token)
 
     def validate_token(self):
         return super().validate_token()
 
-    def create_training_run(self, run:DkubeTraining, wait_for_completion=True):
-        assert type(run) == DkubeTraining, "Invalid type for run, value must be instance of rsrcs:DkubeTraining class"
+    def create_training_run(self, run: DkubeTraining, wait_for_completion=True):
+        assert type(
+            run) == DkubeTraining, "Invalid type for run, value must be instance of rsrcs:DkubeTraining class"
         super().create_run(run)
         while wait_for_completion:
             status = super().get_run('training', run.user, run.name, fields='status')
             state, reason = status['state'], status['reason']
             if state.lower() in ['complete', 'failed', 'error']:
-                print("run {} - completed with state {} and reason {}".format(run.name, state, reason))
+                print(
+                    "run {} - completed with state {} and reason {}".format(run.name, state, reason))
                 break
             else:
-                print("run {} - waiting for completion, current state {}".format(run.name, state))
+                print(
+                    "run {} - waiting for completion, current state {}".format(run.name, state))
                 time.sleep(10)
-   
+
     def get_training_run(self, user, name):
         return super().get_run('training', user, name)
 
@@ -32,20 +65,22 @@ class DkubeApi(ApiBase):
     def delete_training_run(self, user, name):
         super().delete_run('training', user, name)
 
-    def create_preprocessing_run(self, run:DkubePreprocessing, wait_for_completion=True):
-        assert type(run) == DkubePreprocessing, "Invalid type for run, value must be instance of rsrcs:DkubePreprocessing class"
+    def create_preprocessing_run(self, run: DkubePreprocessing, wait_for_completion=True):
+        assert type(
+            run) == DkubePreprocessing, "Invalid type for run, value must be instance of rsrcs:DkubePreprocessing class"
         super().create_run(run)
         while wait_for_completion:
             status = super().get_run('preprocessing', run.user, run.name, fields='status')
             state, reason = status['state'], status['reason']
             if state.lower() in ['complete', 'failed', 'error']:
-                print("run {} - completed with state {} and reason {}".format(run.name, state, reason))
+                print(
+                    "run {} - completed with state {} and reason {}".format(run.name, state, reason))
                 break
             else:
-                print("run {} - waiting for completion, current state {}".format(run.name, state))
+                print(
+                    "run {} - waiting for completion, current state {}".format(run.name, state))
                 time.sleep(10)
 
-   
     def get_preprocessing_run(self, user, name):
         return super().get_run('preprocessing', user, name)
 
@@ -55,21 +90,22 @@ class DkubeApi(ApiBase):
     def delete_preprocessing_run(self, user, name):
         super().delete_run('preprocessing', user, name)
 
-
-    def create_serving_run(self, run:DkubeServing, wait_for_completion=True):
-        assert type(run) == DkubeServing, "Invalid type for run, value must be instance of rsrcs:DkubeServing class"
+    def create_serving_run(self, run: DkubeServing, wait_for_completion=True):
+        assert type(
+            run) == DkubeServing, "Invalid type for run, value must be instance of rsrcs:DkubeServing class"
         super().create_run(run)
         while wait_for_completion:
             status = super().get_run(self, 'inference', user, run.name, fields='status')
             state, reason = status['state'], status['reason']
             if state.lower() in ['complete', 'failed', 'error']:
-                print("run {} - completed with state {} and reason {}".format(run.name, state, reason))
+                print(
+                    "run {} - completed with state {} and reason {}".format(run.name, state, reason))
                 break
             else:
-                print("run {} - waiting for completion, current state {}".format(run.name, state))
+                print(
+                    "run {} - waiting for completion, current state {}".format(run.name, state))
                 time.sleep(10)
 
-   
     def get_serving_run(self, user, name):
         return super().get_run('serving', user, name)
 
@@ -79,42 +115,45 @@ class DkubeApi(ApiBase):
     def delete_serving_run(self, user, name):
         super().delete_run('serving', user, name)
 
-
-    
-    def create_project(self, project:DkubeProject, wait_for_completion=True):
-        assert type(project) == DkubeProject, "Invalid type for run, value must be instance of rsrcs:DkubeProject class"
+    def create_project(self, project: DkubeProject, wait_for_completion=True):
+        assert type(
+            project) == DkubeProject, "Invalid type for run, value must be instance of rsrcs:DkubeProject class"
         super().create_repo(project)
         while wait_for_completion:
             status = super().get_repo('program', project.user, project.name, fields='status')
             state, reason = status['state'], status['reason']
             if state.lower() in ['ready', 'failed', 'error']:
-                print("project {} - completed with state {} and reason {}".format(project.name, state, reason))
+                print(
+                    "project {} - completed with state {} and reason {}".format(project.name, state, reason))
                 break
             else:
-                print("project {} - waiting for completion, current state {}".format(project.name, state))
+                print(
+                    "project {} - waiting for completion, current state {}".format(project.name, state))
                 time.sleep(10)
 
     def get_project(self, user, name):
-        return super().get_repo('project', user, name)
+        return super().get_repo('program', user, name)
 
     def list_projects(self, user, filters='*'):
-        return super().list_repos('project', user, name)
+        return super().list_repos('program', user, name)
 
     def delete_project(self, user, name):
-        super().delete_repo('project', user, name)
+        super().delete_repo('program', user, name)
 
-
-    def create_dataset(self, dataset:DkubeDataset, wait_for_completion=True):
-        assert type(dataset) == DkubeDataset, "Invalid type for run, value must be instance of rsrcs:DkubeDataset class"
+    def create_dataset(self, dataset: DkubeDataset, wait_for_completion=True):
+        assert type(
+            dataset) == DkubeDataset, "Invalid type for run, value must be instance of rsrcs:DkubeDataset class"
         super().create_repo(dataset)
         while wait_for_completion:
             status = super().get_repo('dataset', dataset.user, dataset.name, fields='status')
             state, reason = status['state'], status['reason']
             if state.lower() in ['ready', 'failed', 'error']:
-                print("dataset {} - completed with state {} and reason {}".format(dataset.name, state, reason))
+                print(
+                    "dataset {} - completed with state {} and reason {}".format(dataset.name, state, reason))
                 break
             else:
-                print("dataset {} - waiting for completion, current state {}".format(dataset.name, state))
+                print(
+                    "dataset {} - waiting for completion, current state {}".format(dataset.name, state))
                 time.sleep(10)
 
     def get_dataset(self, user, name):
@@ -126,19 +165,20 @@ class DkubeApi(ApiBase):
     def delete_dataset(self, user, name):
         super().delete_repo('dataset', user, name)
 
-
-
-    def create_model(self, model:DkubeModel, wait_for_completion=True):
-        assert type(model) == DkubeModel, "Invalid type for run, value must be instance of rsrcs:DkubeModel class"
+    def create_model(self, model: DkubeModel, wait_for_completion=True):
+        assert type(
+            model) == DkubeModel, "Invalid type for run, value must be instance of rsrcs:DkubeModel class"
         super().create_repo(model)
         while wait_for_completion:
             status = super().get_repo('model', model.user, model.name, fields='status')
             state, reason = status['state'], status['reason']
             if state.lower() in ['ready', 'failed', 'error']:
-                print("model {} - completed with state {} and reason {}".format(model.name, state, reason))
+                print(
+                    "model {} - completed with state {} and reason {}".format(model.name, state, reason))
                 break
             else:
-                print("model {} - waiting for completion, current state {}".format(model.name, state))
+                print(
+                    "model {} - waiting for completion, current state {}".format(model.name, state))
                 time.sleep(10)
 
     def get_model(self, user, name):
@@ -150,7 +190,6 @@ class DkubeApi(ApiBase):
     def delete_model(self, user, name):
         super().delete_repo('model', user, name)
 
-
     def get_head_version(self, category, user, repo):
         pass
 
@@ -160,7 +199,7 @@ class DkubeApi(ApiBase):
     def list_versions(self, category, user, repo):
         pass
 
-    def get_version(self,category, user, repo, version):
+    def get_version(self, category, user, repo, version):
         pass
 
     def get_training_outputs(self, user, runname):
